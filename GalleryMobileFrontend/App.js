@@ -1,35 +1,63 @@
 import React, { Component } from 'react';
 import { AppRegistry, ScrollView, 
-  StyleSheet, Image, Text, View } from 'react-native';
+  StyleSheet, Image, Text, View,Button,Alert, TouchableWithoutFeedback } from 'react-native';
+import {
+  StackNavigator,
+} from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 
+export class paintingViewScreen extends Component {
+	render() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Details Screen</Text>
+      </View>
+    );
+  }
+}
 
-export default class IScrolledDownAndWhatHappenedNextShockedMe extends Component {
+export class paintingListScreen extends Component {
+
+	static navigationOptions = {
+    title: 'Painting List',
+  };
 
   state = {
-      names: [
-         {'name': 'Ben', 'id': 1},
-         {'name': 'Susan', 'id': 2},
-         {'name': 'Robert', 'id': 3},
-         {'name': 'Mary', 'id': 4},
-         {'name': 'Daniel', 'id': 5},
-         {'name': 'Laura', 'id': 6},
-         {'name': 'John', 'id': 7},
-         {'name': 'Debra', 'id': 8},
-         {'name': 'Aron', 'id': 9},
-         {'name': 'Ann', 'id': 10},
-         {'name': 'Steve', 'id': 11},
-         {'name': 'Olivia', 'id': 12}
+      paintings: [
+
+         {'title': 'Lost in space and time', 
+         'artist': 'Eitan', 
+         'price': '$.4 ETH',
+     	  'image': 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg', 
+         'id': 1},
+
+         {'title': 'Cool Mona', 
+         'artist': 'Cool Leo', 
+         'price': '$.3 ETH',
+         'image': 'https://i.pinimg.com/originals/0a/a3/09/0aa3092b44da8ad03a7f2d3e9ae6d413.jpg', 
+         'id': 2},
+
+         {'title': 'Las Meninas', 
+         'artist': 'Velazquez', 
+         'price': '$.6 ETH',
+         'image': 'https://media1.britannica.com/eb-media/03/192503-050-15BBC5DC.jpg', 
+         'id': 3},
       ]
    }
 
   render() {
+
+ 	const { navigate } = this.props.navigation;
+
       return (
         <View style={{flex: 1}}>
 
-        <LinearGradient colors={['#5f9ea0', '#6495ed', '#00008b']} style={styles.linearGradient}>
-          <Text style={styles.buttonText}>
-          5 Paintings
+        <LinearGradient colors={['#00BFFF', '#1E90FF']} style={styles.linearGradient}>
+          <Text style={styles.headerText}>
+          Your Collection
+          </Text>
+          <Text style={styles.subtitleText}>
+          3 Pieces
           </Text>
           </LinearGradient>
 
@@ -37,12 +65,25 @@ export default class IScrolledDownAndWhatHappenedNextShockedMe extends Component
         <ScrollView style={styles.scrollViewStyle}>
 
           {
-                  this.state.names.map((item, index) => (
-                     <View key = {item.id} style = {styles.item}>
-                        <Text>{item.name}</Text>
-                        //<Text>test</Text>
-                        //<Text>test</Text>
+                  this.state.paintings.map((item, index) => (
+
+                  <TouchableWithoutFeedback 
+                  onPress={() => navigate('paintingView' ) }
+                  key = {item.id}>
+
+                     <View style = {styles.paintingListEntry}>              
+
+                     	<Image source={{uri: item.image}}
+      					 style={styles.paintingThumbnailStyle} />
+
+      					 <View style = {styles.paintingListEntryDescriptionParent}>
+                        	<Text style = {styles.paintingListHeaderEntryText}>{item.title}</Text>
+                       		<Text style = {styles.paintingListSubEntryText}>{item.artist}</Text>
+                       		<Text style = {styles.paintingListSubEntryText}>{item.price}</Text>
+                       	 </View>
+
                      </View>
+                   </TouchableWithoutFeedback>
                   ))
                }
 
@@ -54,24 +95,12 @@ export default class IScrolledDownAndWhatHappenedNextShockedMe extends Component
 }
 
 const styles = StyleSheet.create({
-  header: {
-    flex: .25, 
-    backgroundColor: 'darkblue',
+	linearGradient: {
+    flex: .25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 0,
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20, 
-    fontFamily: 'GeosansLight',
-    fontSize: 45,
-    color: 'white',
-  },
-  viewOfPaintings: {
-    flex: 1,
-    paddingVertical: 0,
-    flexDirection: 'column',
-    justifyContent: 'space-evenly',
     alignItems: 'center',
   },
   scrollViewStyle: {
@@ -79,55 +108,68 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     backgroundColor: 'white',
   },
-  singlePaintingRow: {
-    flex: 1,
-    backgroundColor: 'green',
-    //flexDirection: 'row',
-    paddingVertical: 20,
-    paddingLeft: 100,
-    paddingRight: 100,
-    //margin: 50,
-    //paddingLeft: 30,
-    //paddingRight: 30,
-    borderRadius: 5,
-  },
-  item: {
+  paintingListEntry: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: 80,
-      margin: 50,
+      justifyContent: 'flex-start',
+      alignItems: 'stretch',
+      margin: 10,
       borderColor: '#2a4944',
-      borderWidth: 5,
-      backgroundColor: '#F0FFFF',
-      borderRadius: 5,
+      borderWidth: 0,
+      backgroundColor: '#F8F8FF',
+      borderRadius: 10,
    },
-  bigblue: {
-    color: 'blue',
-    fontWeight: 'bold',
-    fontSize: 30,
-  },
-  red: {
-    color: 'red',
-  },
-  linearGradient: {
-    flex: .25,
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderRadius: 0,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 30,
+   paintingThumbnailStyle: {
+   	width:100, 
+   	height: 120,
+   	alignSelf: 'flex-start',
+   	borderRadius: 5,
+   	margin: 5,
+   },
+   paintingListEntryDescriptionParent: {
+   	flex: 1,
+   	overflow: 'visible',
+   },
+   paintingListHeaderEntryText: {
+   	fontSize: 30,
+   },
+   paintingListSubEntryText: {
+   	fontSize: 20,
+   },
+   paintingListViewButtonParent: {
+   	backgroundColor: 'blue',
+   	flexDirection: 'row',
+   },
+   paintingListExpand: {
+   	fontSize: 40,
+   },
+  headerText: {
+    fontSize: 40,
     fontFamily: 'Gill Sans',
+    fontWeight: 'normal',
     textAlign: 'center',
-    margin: 30,
+    marginTop: 30,
     color: '#ffffff',
     backgroundColor: 'transparent',
   },
+  subtitleText: {
+  	fontSize: 20,
+  	color: '#ffffff'
+  }
 });
+
+const RootStack = StackNavigator({
+  paintingList: { screen: paintingListScreen },
+  paintingView: { screen: paintingViewScreen }, },
+  {
+    initialRouteName: 'paintingList',
+  },
+);
+
+export default class App extends React.Component {
+  render() {
+    return <RootStack />;
+  }
+}
 
 // skip these lines if using Create React Native App
 AppRegistry.registerComponent(
