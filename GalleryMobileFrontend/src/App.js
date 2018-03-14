@@ -2,9 +2,30 @@ import React, { Component } from 'react';
 import { AppRegistry, ScrollView, 
   StyleSheet, Image, Text, View,Button,Alert, TouchableWithoutFeedback } from 'react-native';
 import {
+  TabNavigator,
   StackNavigator,
 } from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
+
+class HomeScreen extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Home!</Text>
+      </View>
+    );
+  }
+}
+
+class Settings extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Settings</Text>
+      </View>
+    );
+  }
+}
 
 export class paintingViewScreen extends Component {
 	render() {
@@ -19,7 +40,8 @@ export class paintingViewScreen extends Component {
 export class paintingListScreen extends Component {
 
 	static navigationOptions = {
-    title: 'Painting List',
+	title: 'Your Collection',
+    header: null,
   };
 
   state = {
@@ -28,7 +50,7 @@ export class paintingListScreen extends Component {
          {'title': 'Lost in space and time', 
          'artist': 'Eitan', 
          'price': '$.4 ETH',
-     	  'image': 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg', 
+     	 'image': 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg', 
          'id': 1},
 
          {'title': 'Cool Mona', 
@@ -42,6 +64,12 @@ export class paintingListScreen extends Component {
          'price': '$.6 ETH',
          'image': 'https://media1.britannica.com/eb-media/03/192503-050-15BBC5DC.jpg', 
          'id': 3},
+
+         {'title': 'Third of May', 
+         'artist': 'Goya', 
+         'price': '$.6 ETH',
+         'image': 'https://en.wikipedia.org/wiki/The_Third_of_May_1808#/media/File:El_dos_de_mayo_de_1808_en_Madrid.jpg', 
+         'id': 4},
       ]
    }
 
@@ -157,19 +185,33 @@ const styles = StyleSheet.create({
   }
 });
 
-const RootStack = StackNavigator({
+const paintingListStack = StackNavigator({
   paintingList: { screen: paintingListScreen },
   paintingView: { screen: paintingViewScreen }, },
   {
     initialRouteName: 'paintingList',
+
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: '#00BFFF',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    },
   },
 );
 
-export default class App extends React.Component {
-  render() {
-    return <RootStack />;
-  }
-}
+
+
+export default TabNavigator({
+  Explore: { screen: HomeScreen },
+  Collection: {screen: paintingListStack},
+  Settings: { screen: Settings},
+});
+
+
 
 // skip these lines if using Create React Native App
 AppRegistry.registerComponent(
