@@ -5,7 +5,10 @@ import {
   TabNavigator,
   StackNavigator,
 } from 'react-navigation';
+
 import LinearGradient from 'react-native-linear-gradient';
+import "./screens/screens.js"
+import "./styles/styles.js"
 
 class HomeScreen extends React.Component {
   render() {
@@ -29,10 +32,24 @@ class Settings extends React.Component {
 
 export class paintingViewScreen extends Component {
 	render() {
+
+    const { params } = this.props.navigation.state;
+    const itemId = params ? params.itemId : null;
+    const itemTitle = params ? params.itemTitle : null;
+    const itemPrice = params ? params.itemPrice: null;
+    const itemArtist = params ? params.itemArtist: null;
+    const itemURL = params ? params.itemURL: null;
+
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Details Screen</Text>
+      <ScrollView>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
+        <Text style = {paintingDetailStyles.paintingTitle} >{itemTitle}</Text>
+        <Text style = {paintingDetailStyles.paintingArtist}>{itemArtist}</Text>
+        <Text style = {paintingDetailStyles.paintingPrice}>{itemPrice}</Text>
+        <Image source={{uri: itemURL}}
+                 style={paintingDetailStyles.paintingStyle} />
       </View>
+      </ScrollView>
     );
   }
 }
@@ -96,7 +113,15 @@ export class paintingListScreen extends Component {
                   this.state.paintings.map((item, index) => (
 
                   <TouchableWithoutFeedback 
-                  onPress={() => navigate('paintingView' ) }
+                  onPress={() => navigate('paintingView', {
+                    itemID: item.id,
+                    itemTitle: item.title,
+                    itemArtist: item.artist,
+                    itemPrice: item.price,
+                    itemURL: item.image,
+
+                   }) 
+                  }
                   key = {item.id}>
 
                      <View style = {styles.paintingListEntry}>              
@@ -121,6 +146,24 @@ export class paintingListScreen extends Component {
     );
   }
 }
+
+const paintingDetailStyles = StyleSheet.create({
+  paintingTitle: {
+    fontSize: 30,
+    paddingVertical: 5,
+  },
+  paintingArtist: {
+    fontSize: 20,
+  },
+  paintingPrice: {
+    fontSize: 20,
+  },
+  paintingStyle: {
+    width: 500,
+    height: 500,
+  },
+
+});
 
 const styles = StyleSheet.create({
 	linearGradient: {
