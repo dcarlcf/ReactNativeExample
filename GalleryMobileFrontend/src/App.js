@@ -1,9 +1,25 @@
 import React, { Component } from 'react';
 import { AppRegistry, ScrollView, 
-  StyleSheet, Image, Text, View,Button,Alert, TouchableWithoutFeedback } from 'react-native';
+  StyleSheet, 
+  Image, 
+  Text, 
+  View,
+  Button,
+  Alert, 
+  TouchableWithoutFeedback,
+  ActivityIndicator,
+  AsyncStorage,
+  StatusBar, 
+} from 'react-native';
+
+
+const timer = require('react-native-timer');
+
+
 import {
   TabNavigator,
   StackNavigator,
+  SwitchNavigator,
 } from 'react-navigation';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -147,6 +163,63 @@ export class paintingListScreen extends Component {
   }
 }
 
+class SignInScreen extends React.Component {
+  static navigationOptions = {
+    header: 'null'
+  };
+
+  componentDidMount(){
+         // Start counting when the page is loaded
+         this.timeoutHandle = setTimeout(()=>{
+              this.props.navigation.navigate('App');
+         }, 1000);
+    }
+
+    componentWillUnmount(){
+         clearTimeout(this.timeoutHandle); // This is just necessary in the case that the screen is closed before the timeout fires, otherwise it would cause a memory leak that would trigger the transition regardless, breaking the user experience.
+    }
+
+    render() {
+
+    return (
+      <View style={styles.logInBackground}>
+        <Image source={require('./images/LogoWhite.png')} style ={styles.logoLogInStyle} />
+         <Text style = {styles.logInButton}> Smart Canvas App</Text>
+        //How to redirect to another page from here after 5 secs?
+        </View>
+
+    );
+  }
+
+}
+
+
+class AuthLoadingScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this._bootstrapAsync();
+  }
+
+  // Fetch the token from storage then navigate to our appropriate place
+  _bootstrapAsync = async () => {
+    const userToken = await AsyncStorage.getItem('userToken');
+
+    // This will switch to the App screen or Auth screen and this loading
+    // screen will be unmounted and thrown away.
+    this.props.navigation.navigate(userToken ? 'Auth' : 'Auth');
+  };
+
+  // Render any loading content that you like here
+  render() {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator />
+        <StatusBar barStyle="default" />
+      </View>
+    );
+  }
+}
+
 const paintingDetailStyles = StyleSheet.create({
   paintingTitle: {
     fontSize: 30,
@@ -166,6 +239,24 @@ const paintingDetailStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  logInButton: {
+    fontFamily: 'OpenSans-SemiBold',
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#FFFFFF'
+  },
+  logoLogInStyle: {
+    flex: .15,
+    resizeMode: 'contain',
+
+  },
+  logInBackground: {
+    flex: 1,
+    backgroundColor: '#000000',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 	linearGradient: {
     flex: .25,
     paddingLeft: 10,
@@ -246,15 +337,25 @@ const paintingListStack = StackNavigator({
   },
 );
 
-
-
-export default TabNavigator({
+const AppStack =  TabNavigator({
   Explore: { screen: HomeScreen },
   Collection: {screen: paintingListStack},
   Settings: { screen: Settings},
 });
 
+const AuthStack = StackNavigator({ SignIn: SignInScreen });
 
+export default SwitchNavigator(
+  {
+    AuthLoading: AuthLoadingScreen,
+    App: AppStack,
+    Auth: AuthStack,
+  },
+  {
+    initialRouteName: 'AuthLoading',
+    initialRouteParams: { transition: 'fade' },
+  }
+);
 
 // skip these lines if using Create React Native App
 AppRegistry.registerComponent(
