@@ -10,11 +10,18 @@ import { AppRegistry, ScrollView,
   ActivityIndicator,
   AsyncStorage,
   StatusBar, 
+  TouchableOpacity,
+  TextInput,
+  Animated,
 } from 'react-native';
+
+Dimensions = React.Dimensions || require('Dimensions'), {width, height} = Dimensions.get('window');
+
+const  vw = width/100
+const vh = height/100
 
 
 const timer = require('react-native-timer');
-
 
 import {
   TabNavigator,
@@ -37,13 +44,23 @@ class HomeScreen extends React.Component {
 }
 
 class Settings extends React.Component {
+
+  static navigationOptions = {
+    title: 'Settings',
+  };
+
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Settings</Text>
+      <View style={styles.container}>
+        <Button title="Sign out!" onPress={this._signOutAsync} />
       </View>
     );
   }
+
+  _signOutAsync = async () => {
+    await AsyncStorage.clear();
+    this.props.navigation.navigate('Auth');  
+  };
 }
 
 export class paintingViewScreen extends Component {
@@ -163,7 +180,7 @@ export class paintingListScreen extends Component {
   }
 }
 
-class SignInScreen extends React.Component {
+class LoadScreen extends React.Component {
   static navigationOptions = {
     header: 'null'
   };
@@ -171,8 +188,8 @@ class SignInScreen extends React.Component {
   componentDidMount(){
          // Start counting when the page is loaded
          this.timeoutHandle = setTimeout(()=>{
-              this.props.navigation.navigate('App');
-         }, 1000);
+              this.props.navigation.navigate('AuthLoading');
+         }, 5000);
     }
 
     componentWillUnmount(){
@@ -182,10 +199,19 @@ class SignInScreen extends React.Component {
     render() {
 
     return (
-      <View style={styles.logInBackground}>
+     <View style={styles.logInBackground}>
+        <FadeInView style = {
+          {
+            flex: 1,
+            backgroundColor: '#000000',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }
+        }>
         <Image source={require('./images/LogoWhite.png')} style ={styles.logoLogInStyle} />
          <Text style = {styles.logInButton}> Smart Canvas App</Text>
-        //How to redirect to another page from here after 5 secs?
+         </FadeInView>
         </View>
 
     );
@@ -193,8 +219,39 @@ class SignInScreen extends React.Component {
 
 }
 
+class FadeInView extends React.Component {
+  state = {
+    fadeAnim: new Animated.Value(0),  // Initial value for opacity: 0
+  }
+
+  componentDidMount() {
+    Animated.timing(                  // Animate over time
+      this.state.fadeAnim,            // The animated value to drive
+      {
+        toValue: 1,                   // Animate to opacity: 1 (opaque)
+        duration: 1000,              // Make it take a while
+      }
+    ).start();                        // Starts the animation
+  }
+
+  render() {
+    let { fadeAnim } = this.state;
+
+    return (
+      <Animated.View                 // Special animatable View
+        style={{
+          ...this.props.style,
+          opacity: fadeAnim,         // Bind opacity to animated value
+        }}
+      >
+        {this.props.children}
+      </Animated.View>
+    );
+  }
+}
 
 class AuthLoadingScreen extends React.Component {
+
   constructor(props) {
     super(props);
     this._bootstrapAsync();
@@ -206,7 +263,7 @@ class AuthLoadingScreen extends React.Component {
 
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
-    this.props.navigation.navigate(userToken ? 'Auth' : 'Auth');
+    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
   };
 
   // Render any loading content that you like here
@@ -218,6 +275,91 @@ class AuthLoadingScreen extends React.Component {
       </View>
     );
   }
+}
+
+class SignInScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.props.navigation.state = {errorMessage: "invalid"}
+  }
+
+  state =  {
+    errorMessage: true,
+    emailText: '',
+    passwordText: '',
+  }
+ 
+  static navigationOptions = {
+    header: 'null',
+  };
+
+  render() {
+    const { params } = this.props.navigation.state;
+    const passwordColor = "#FF0000"//params ? params.errorMessage : null;
+    const passwordShow = .6;
+    return (
+      <View style={styles.signInScreenBackground}>
+
+      <Image source={require('./images/LogoWhite.png')} style ={styles.logoSignInStyle} />
+
+      <View style = {styles.singInBelowLogo} >
+
+      <Text style = {styles.signInText}> Sign In </Text>
+
+      <Text style = {styles.signInInfoText}> Email </Text>
+      <View style = {styles.textInputBoxStyle}>
+      <TextInput  style={styles.textInputStyle} placeholder = "You@email.com" 
+      onChangeText={(emailText) => {
+        this.setState({errorMessage: false});
+        this.setState({emailText});
+      }
+      }
+      />
+      </View>
+
+      <Text style = {styles.signInInfoText}> Password </Text>
+      <View style = {styles.textInputBoxStyle}>
+      <TextInput secureTextEntry = {true} style={styles.textInputStyle} placeholder = 'Password' 
+      onChangeText={(passwordText) => {
+        this.setState({errorMessage: false});
+        this.setState({passwordText});
+      }
+      }
+      />
+      <Image source = {require('./images/errorExclamation.png')} 
+      style = { [styles.errorMessageStyle, this.state.errorMessage && styles.showErrorMessage] }/>
+      </View>
+
+      <TouchableOpacity onPress={this._signInAsync}>
+      <View style = {styles.buttonStyle}>
+      <Text style = {styles.buttonTextStyle}>Access Your Art</Text>
+      </View>
+      
+       </TouchableOpacity>
+
+      <TouchableOpacity onPress={this._recoverEmail} >
+      <Text style = {styles.recoverInfoText}>Recover Email</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={this._recoverPassword} >
+      <Text style = {styles.recoverInfoText}>Recover Password</Text>
+      </TouchableOpacity>
+
+      </View>
+
+      </View>
+    );
+  }
+
+  _signInAsync = async () => {
+    await AsyncStorage.setItem('userToken', 'abc');
+    this.props.navigation.navigate('App');
+  };
+
+  _recoverEmail = async () => {
+    await AsyncStorage.setItem('userToken', 'abc');
+    this.props.navigation.navigate('App');
+  };
 }
 
 const paintingDetailStyles = StyleSheet.create({
@@ -239,6 +381,93 @@ const paintingDetailStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  errorMessageStyle: {
+    flex: 1,
+    opacity: 0,
+    width: 150,
+    height: 40,
+    marginRight: vw*4,
+    alignSelf: 'flex-end'
+  },
+  showErrorMessage: {
+    opacity: 1,
+  },
+  singInBelowLogo: {
+    marginTop: 40,
+    flex: .8,
+    alignSelf: 'stretch'
+  },
+  recoverInfoText: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 10,
+    marginBottom: 10,
+    color: '#FFFFFF',
+    alignSelf: 'center',
+  },
+  logoSignInStyle: {
+    marginTop: vh*10,
+    marginBottom: 0,
+    flex: .15,
+    resizeMode: 'contain',
+  },
+  signInText: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 20,
+    color: '#FFFFFF',
+    marginBottom: 12,
+    marginLeft: vw*4,
+    alignSelf: 'flex-start',
+  },
+  signInInfoText: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 14,
+    color: '#FFFFFF',
+    marginBottom: vh*1.5,
+    marginLeft: vw*4,
+    alignSelf: 'flex-start',
+
+  },
+  textInputBoxStyle: {
+    backgroundColor: '#FFFFFF',
+    height: 40,
+    borderRadius: 6,
+    marginBottom: 10,
+    marginLeft: vw*4,
+    marginRight: vw*4,
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    justifyContent: 'flex-start'
+  },
+  signInScreenBackground: {
+    flex: 1,
+    backgroundColor: '#000000',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textInputStyle: {
+    flex: 1,
+    height: 40,
+    marginLeft: vw*2,
+    alignSelf: 'flex-start'
+  },
+  buttonTextStyle: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 15,
+    color: '#000000'
+  },
+  buttonStyle: {
+    backgroundColor: "#FFFFFF",
+    width: 150,
+    height: 50,
+    borderRadius: 6,
+    marginTop: vh*2,
+    marginBottom: vh*2,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   logInButton: {
     fontFamily: 'OpenSans-SemiBold',
     paddingVertical: 10,
@@ -246,16 +475,20 @@ const styles = StyleSheet.create({
     color: '#FFFFFF'
   },
   logoLogInStyle: {
-    flex: .15,
+    paddingVertical: 10,
+    flex: .2,
     resizeMode: 'contain',
-
   },
-  logInBackground: {
+  logInFadeInView: {
     flex: 1,
     backgroundColor: '#000000',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  logInBackground: {
+    flex: 1,
+    backgroundColor: '#000000',
   },
 	linearGradient: {
     flex: .25,
@@ -343,10 +576,15 @@ const AppStack =  TabNavigator({
   Settings: { screen: Settings},
 });
 
-const AuthStack = StackNavigator({ SignIn: SignInScreen });
+const AuthStack = StackNavigator({ 
+
+  SignIn: SignInScreen,
+  
+});
 
 export default SwitchNavigator(
   {
+    Load: LoadScreen,
     AuthLoading: AuthLoadingScreen,
     App: AppStack,
     Auth: AuthStack,
