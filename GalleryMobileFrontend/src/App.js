@@ -73,6 +73,8 @@ export class paintingViewScreen extends Component {
     const itemArtist = params ? params.itemArtist: null;
     const itemURL = params ? params.itemURL: null;
 
+    Image.getSize(itemURL, (width, height) => {this.setState({width, height})});
+
     return (
       <ScrollView>
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
@@ -97,31 +99,36 @@ export class paintingListScreen extends Component {
   state = {
       paintings: [
 
-         {'title': 'Lost in space and time', 
-         'artist': 'Eitan', 
+         {'title': 'Mr Tie Guy', 
+         'artist': 'Eitan Barokas', 
          'price': '$.4 ETH',
-     	 'image': 'https://upload.wikimedia.org/wikipedia/commons/d/de/Bananavarieties.jpg', 
+     	   'image': "require('./images/Abstract.jpg')", 
+         'width': 1657,
+         'height': 2159,
          'id': 1},
 
-         {'title': 'Cool Mona', 
-         'artist': 'Cool Leo', 
+         {'title': 'Magdiel', 
+         'artist': 'Alexander Casanova LA', 
          'price': '$.3 ETH',
-         'image': 'https://i.pinimg.com/originals/0a/a3/09/0aa3092b44da8ad03a7f2d3e9ae6d413.jpg', 
+         'image': './images/Abstract.jpg', 
+          'width': 2500,
+         'height': 1874,
          'id': 2},
 
-         {'title': 'Las Meninas', 
-         'artist': 'Velazquez', 
+         {'title': 'Memory Lane', 
+         'artist': 'Nathan Lane', 
          'price': '$.6 ETH',
-         'image': 'https://media1.britannica.com/eb-media/03/192503-050-15BBC5DC.jpg', 
+         'image': 'require(./images/Abstract.jpg)', 
+         'width': 2500,
+         'height': 1874,
          'id': 3},
 
-         {'title': 'Third of May', 
-         'artist': 'Goya', 
-         'price': '$.6 ETH',
-         'image': 'https://en.wikipedia.org/wiki/The_Third_of_May_1808#/media/File:El_dos_de_mayo_de_1808_en_Madrid.jpg', 
-         'id': 4},
-      ]
+      ],
+      numPaintings: 5,
+
    }
+
+
 
   render() {
 
@@ -130,20 +137,31 @@ export class paintingListScreen extends Component {
       return (
         <View style={{flex: 1}}>
 
-        <LinearGradient colors={['#00BFFF', '#1E90FF']} style={styles.linearGradient}>
-          <Text style={styles.headerText}>
-          Your Collection
-          </Text>
-          <Text style={styles.subtitleText}>
-          3 Pieces
-          </Text>
-          </LinearGradient>
+        <View style = {styles.viewScreenHeader}>
+
+          <View style = {styles.yourCollectionText}>
+            <Text style = {styles.headerText} numberOfLines = {2} >
+            Your
+            </Text>
+            <Text style = {styles.headerText} numberOfLines = {2} >
+            Collection
+            </Text>
+          </View>
+          <Image source={require('./images/LogoWhite.png')} style ={styles.logoViewHeaderStyle} />
+          <View style = {styles.yourCollectionText, {alignSelf: 'center'}}>
+              <Text style={styles.subtitleText}>
+              {this.state.numPaintings} Paintings
+              </Text>
+          </View>
+        </View>
 
          
         <ScrollView style={styles.scrollViewStyle}>
 
           {
+
                   this.state.paintings.map((item, index) => (
+                    
 
                   <TouchableWithoutFeedback 
                   onPress={() => navigate('paintingView', {
@@ -152,6 +170,8 @@ export class paintingListScreen extends Component {
                     itemArtist: item.artist,
                     itemPrice: item.price,
                     itemURL: item.image,
+                    itemWidth: item.width,
+                    itemHeight: item.height,
 
                    }) 
                   }
@@ -159,15 +179,13 @@ export class paintingListScreen extends Component {
 
                      <View style = {styles.paintingListEntry}>              
 
-                     	<Image source={{uri: item.image}}
-      					 style={styles.paintingThumbnailStyle} />
-
       					 <View style = {styles.paintingListEntryDescriptionParent}>
                         	<Text style = {styles.paintingListHeaderEntryText}>{item.title}</Text>
                        		<Text style = {styles.paintingListSubEntryText}>{item.artist}</Text>
-                       		<Text style = {styles.paintingListSubEntryText}>{item.price}</Text>
-                       	 </View>
-
+                  </View>
+                          <Image source = {require('./images/Magdiel.jpg')}
+                 style={{alignSelf: 'center', height: vh*18.5, width: (item.width/item.height)*vh*18.5}} />
+                 
                      </View>
                    </TouchableWithoutFeedback>
                   ))
@@ -381,11 +399,47 @@ const paintingDetailStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
+  logoViewHeaderStyle: {
+    height: 6*vh,
+    width: 17*vw,
+    alignSelf: 'center',
+    resizeMode: 'contain'
+  },
+  yourCollectionText: {
+    height: 13.5*vh,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    alignSelf: 'flex-start',
+    marginLeft: 2*vw,
+  },
+  subtitleText: {
+    fontSize: vw*3,
+    fontFamily: 'OpenSans-SemiBold',
+    color: '#ffffff',
+    alignSelf: 'center',
+    marginRight: 2*vw,
+  },
+  headerText: {
+    fontSize: vw*3.5,
+    marginLeft: vw*2,
+    fontFamily: 'OpenSans-SemiBold',
+    textAlign: 'left',
+    color: '#ffffff',
+    backgroundColor: 'transparent',
+  },
+  viewScreenHeader: {
+    backgroundColor: "#000000",
+    height: 13.5*vh,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
   errorMessageStyle: {
     flex: 1,
     opacity: 0,
     width: 150,
-    height: 40,
+    height: vh*6,
     marginRight: vw*4,
     alignSelf: 'flex-end'
   },
@@ -415,7 +469,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#FFFFFF',
     marginBottom: 12,
-    marginLeft: vw*4,
+    marginLeft: vw*12.5,
     alignSelf: 'flex-start',
   },
   signInInfoText: {
@@ -423,18 +477,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#FFFFFF',
     marginBottom: vh*1.5,
-    marginLeft: vw*4,
+    marginLeft: vw*12.5,
     alignSelf: 'flex-start',
 
   },
   textInputBoxStyle: {
     backgroundColor: '#FFFFFF',
-    height: 40,
+    height: vh*6,
+    width: vw*75,
     borderRadius: 6,
     marginBottom: 10,
     marginLeft: vw*4,
     marginRight: vw*4,
-    alignSelf: 'stretch',
+    alignSelf: 'center',
     flexDirection: 'row',
     justifyContent: 'flex-start'
   },
@@ -447,7 +502,7 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     flex: 1,
-    height: 40,
+    height: vh*6,
     marginLeft: vw*2,
     alignSelf: 'flex-start'
   },
@@ -500,35 +555,46 @@ const styles = StyleSheet.create({
   },
   scrollViewStyle: {
     flex: 20,
-    paddingVertical: 5,
     backgroundColor: 'white',
   },
   paintingListEntry: {
+      flex: 1,
       flexDirection: 'row',
-      justifyContent: 'flex-start',
-      alignItems: 'stretch',
-      margin: 10,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginLeft: vw*3,
+      marginRight: vw*3,
       borderColor: '#2a4944',
       borderWidth: 0,
-      backgroundColor: '#F8F8FF',
-      borderRadius: 10,
+      backgroundColor: '#FFFFFF',
+      height: vh*24,
+      borderBottomColor: '#D3D3D3',
+      borderBottomWidth: 2,
    },
    paintingThumbnailStyle: {
-   	width:100, 
-   	height: 120,
-   	alignSelf: 'flex-start',
-   	borderRadius: 5,
-   	margin: 5,
+   	height: vh*15,
+    width: ( (656/480)*vh*8),
+    marginBottom: vh*2.5,
+    backgroundColor: '#000000',
+    resizeMode: 'contain',
    },
    paintingListEntryDescriptionParent: {
-   	flex: 1,
-   	overflow: 'visible',
+    flex: 2,
+   	flexDirection: 'column',
    },
    paintingListHeaderEntryText: {
-   	fontSize: 30,
+    justifyContent: 'center',
+   	fontSize: vw*5.5,
+    fontFamily: 'OpenSans-Bold',
+    marginLeft: vw*5,
+    marginRight: vw*4,
    },
    paintingListSubEntryText: {
-   	fontSize: 20,
+   	fontSize: vw*3,
+    fontFamily: 'OpenSans-SemiBoldItalic',
+
+    marginLeft: vw*5,
+    marginRight: vw*4,
    },
    paintingListViewButtonParent: {
    	backgroundColor: 'blue',
@@ -537,19 +603,6 @@ const styles = StyleSheet.create({
    paintingListExpand: {
    	fontSize: 40,
    },
-  headerText: {
-    fontSize: 40,
-    fontFamily: 'Gill Sans',
-    fontWeight: 'normal',
-    textAlign: 'center',
-    marginTop: 30,
-    color: '#ffffff',
-    backgroundColor: 'transparent',
-  },
-  subtitleText: {
-  	fontSize: 20,
-  	color: '#ffffff'
-  }
 });
 
 const paintingListStack = StackNavigator({
@@ -560,7 +613,7 @@ const paintingListStack = StackNavigator({
 
     navigationOptions: {
       headerStyle: {
-        backgroundColor: '#00BFFF',
+        backgroundColor: '#000000',
       },
       headerTintColor: '#fff',
       headerTitleStyle: {
@@ -571,7 +624,6 @@ const paintingListStack = StackNavigator({
 );
 
 const AppStack =  TabNavigator({
-  Explore: { screen: HomeScreen },
   Collection: {screen: paintingListStack},
   Settings: { screen: Settings},
 });

@@ -1,4 +1,7 @@
 {
   "name": "GalleryMobileFrontend",
-  "displayName": "GalleryMobileFrontend"
+  "displayName": "GalleryMobileFrontend",
+}
+"ios": {
+   "supportsTablet": true
 }
