@@ -64,6 +64,9 @@ class Settings extends React.Component {
 }
 
 export class paintingViewScreen extends Component {
+
+
+
 	render() {
 
     const { params } = this.props.navigation.state;
@@ -72,17 +75,18 @@ export class paintingViewScreen extends Component {
     const itemPrice = params ? params.itemPrice: null;
     const itemArtist = params ? params.itemArtist: null;
     const itemURL = params ? params.itemURL: null;
-
-    Image.getSize(itemURL, (width, height) => {this.setState({width, height})});
+    const itemWidth = params ? params.itemWidth: null;
+    const itemHeight = params ? params.itemHeight: null;
 
     return (
       <ScrollView>
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
         <Text style = {paintingDetailStyles.paintingTitle} >{itemTitle}</Text>
         <Text style = {paintingDetailStyles.paintingArtist}>{itemArtist}</Text>
-        <Text style = {paintingDetailStyles.paintingPrice}>{itemPrice}</Text>
-        <Image source={{uri: itemURL}}
-                 style={paintingDetailStyles.paintingStyle} />
+        <Image source={itemURL}
+                 style={{
+                  width: itemWidth,
+                  height: itemHeight}}/>
       </View>
       </ScrollView>
     );
@@ -382,11 +386,13 @@ class SignInScreen extends React.Component {
 
 const paintingDetailStyles = StyleSheet.create({
   paintingTitle: {
-    fontSize: 30,
+    fontSize: vh*8,
     paddingVertical: 5,
+    fontFamily: 'OpenSans-Bold',
   },
   paintingArtist: {
-    fontSize: 20,
+    fontSize: vh*3,
+    fontFamily: 'OpenSans-SemiBoldItalic',
   },
   paintingPrice: {
     fontSize: 20,
