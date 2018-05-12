@@ -99,26 +99,26 @@ export class paintingListScreen extends Component {
   state = {
       paintings: [
 
-         {'title': 'Mr Tie Guy', 
+         {'title': 'Abstract', 
          'artist': 'Eitan Barokas', 
          'price': '$.4 ETH',
-     	   'image': "require('./images/Abstract.jpg')", 
-         'width': 1657,
-         'height': 2159,
+     	   'image': require('./images/Abstract.jpg'), 
+         'width': 480,
+         'height': 656,
          'id': 1},
 
          {'title': 'Magdiel', 
          'artist': 'Alexander Casanova LA', 
          'price': '$.3 ETH',
-         'image': './images/Abstract.jpg', 
-          'width': 2500,
-         'height': 1874,
+         'image': require('./images/Magdiel.jpg'), 
+          'width': 1657,
+         'height': 2159,
          'id': 2},
 
          {'title': 'Memory Lane', 
          'artist': 'Nathan Lane', 
          'price': '$.6 ETH',
-         'image': 'require(./images/Abstract.jpg)', 
+         'image': require('./images/MemoryLane.jpg'), 
          'width': 2500,
          'height': 1874,
          'id': 3},
@@ -183,7 +183,7 @@ export class paintingListScreen extends Component {
                         	<Text style = {styles.paintingListHeaderEntryText}>{item.title}</Text>
                        		<Text style = {styles.paintingListSubEntryText}>{item.artist}</Text>
                   </View>
-                          <Image source = {require('./images/Magdiel.jpg')}
+                          <Image source = {item.image}
                  style={{alignSelf: 'center', height: vh*18.5, width: (item.width/item.height)*vh*18.5}} />
                  
                      </View>
