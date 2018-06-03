@@ -17,5 +17,5 @@ To run it on an iPad, run it with 'react-native run-ios --simulator="iPad Pro" '
 
 Here are some screenshots of the app:
 
-![alt text](GalleryMobileFrontend/GalleryScreenshot1) "Loading Page"
+![alt text](GalleryMobileFrontend/GalleryScreenshot1.png) "Loading Page"
 
