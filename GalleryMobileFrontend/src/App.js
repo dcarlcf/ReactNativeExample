@@ -51,7 +51,7 @@ class Settings extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={styles.logInButton}>
         <Button title="Sign out!" onPress={this._signOutAsync} />
       </View>
     );
@@ -83,10 +83,7 @@ export class paintingViewScreen extends Component {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start' }}>
         <Text style = {paintingDetailStyles.paintingTitle} >{itemTitle}</Text>
         <Text style = {paintingDetailStyles.paintingArtist}>{itemArtist}</Text>
-        <Image source={itemURL}
-                 style={{
-                  width: itemWidth,
-                  height: itemHeight}}/>
+        
       </View>
       </ScrollView>
     );
@@ -128,7 +125,7 @@ export class paintingListScreen extends Component {
          'id': 3},
 
       ],
-      numPaintings: 5,
+      numPaintings: 3,
 
    }
 
@@ -648,7 +645,7 @@ export default SwitchNavigator(
     Auth: AuthStack,
   },
   {
-    initialRouteName: 'AuthLoading',
+    initialRouteName: 'Load',
     initialRouteParams: { transition: 'fade' },
   }
 );
