@@ -19,3 +19,7 @@ Here are some screenshots of the app:
 
 ![alt text](GalleryMobileFrontend/GalleryScreenshot1.png) "Loading Page"
 
+![alt text](GalleryMobileFrontend/GalleryScreenshot2.png) "Login Screen"
+
+![alt text](GalleryMobileFrontend/GalleryScreenshot3.png) "Paintings"
+
